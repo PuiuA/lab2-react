@@ -3,6 +3,24 @@ import {useState} from "react";
 function Square({value, onSquareClick}) {
     return<button className="square" onClick={onSquareClick}>{value}</button>;
 }
+function DivBoard({ squares, handleClick }) {
+    let row = [];
+    let it = 0;
+    for (let i = 0; i < 3; i++) {
+        let col = [];
+        for (let j = 0; j < 3; j++) {
+            col.push(
+                <Square
+                    key={it}
+                    value={squares[it]}
+                    onSquareClick={() => handleClick(it)}/>
+            );
+            it++;
+        }
+        row.push(<div key={i} className="board-row">{col}</div>);
+    }
+    return <>{row}</>;
+}
 
 function Board({ xIsNext, squares, onPlay }) {
     function handleClick(i) {
@@ -26,27 +44,32 @@ function Board({ xIsNext, squares, onPlay }) {
         status = "Next player: " + (xIsNext ? "X" : "O");
     }
 
-    return(<>
+    return (<>
         <div className="status">{status}</div>
-        <div className="board-row">
-            <Square value={squares[0]} onSquareClick={() => handleClick(0)}/>
-            <Square value={squares[1]} onSquareClick={() => handleClick(1)}/>
-            <Square value={squares[2]} onSquareClick={() => handleClick(2)}/>
-        </div>
-        <div className="board-row">
-            <Square value={squares[3]} onSquareClick={() => handleClick(3)}/>
-            <Square value={squares[4]} onSquareClick={() => handleClick(4)}/>
-            <Square value={squares[5]} onSquareClick={() => handleClick(5)}/>
-        </div>
-        <div className="board-row">
-            <Square value={squares[6]} onSquareClick={() => handleClick(6)}/>
-            <Square value={squares[7]} onSquareClick={() => handleClick(7)}/>
-            <Square value={squares[8]} onSquareClick={() => handleClick(8)}/>
-        </div>
+        <DivBoard squares={squares} handleClick={handleClick} />
     </>);
+    //return (
+    // <>
+    //     <div className="status">{status}</div>
+    //     <div className="board-row">
+    //     <Square value={squares[0]} onSquareClick={() => handleClick(0)}/>
+    //         <Square value={squares[1]} onSquareClick={() => handleClick(1)}/>
+    //         <Square value={squares[2]} onSquareClick={() => handleClick(2)}/>
+    //     </div>
+    //     <div className="board-row">
+    //         <Square value={squares[3]} onSquareClick={() => handleClick(3)}/>
+    //         <Square value={squares[4]} onSquareClick={() => handleClick(4)}/>
+    //         <Square value={squares[5]} onSquareClick={() => handleClick(5)}/>
+    //     </div>
+    //     <div className="board-row">
+    //         <Square value={squares[6]} onSquareClick={() => handleClick(6)}/>
+    //         <Square value={squares[7]} onSquareClick={() => handleClick(7)}/>
+    //         <Square value={squares[8]} onSquareClick={() => handleClick(8)}/>
+    //     </div>
+    // </>);
 }
 
-export default function Game() {
+    export default function Game() {
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [currentMove, setCurrentMove] = useState(0);
     const xIsNext = currentMove % 2 === 0;
@@ -61,7 +84,17 @@ export default function Game() {
     function jumpTo(nextMove) {
         setCurrentMove(nextMove);
     }
-
+    function CurrentM(){
+        let description;
+        if (currentMove > 0) {
+            description = 'You are at ' + currentMove + ' move!';
+        } else {
+            description = 'Start the game';
+        }
+        return (
+        <p>{description}</p>
+        );
+    }
     const moves = history.map((squares, move) => {
         let description;
         if (move > 0) {
@@ -79,9 +112,10 @@ export default function Game() {
     return (
         <div className="game">
             <div className="game-board">
-                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+                <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
             </div>
             <div className="game-info">
+                <CurrentM />
                 <ol>{moves}</ol>
             </div>
         </div>
